@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать стол</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Создание игрового стола</h1>
+        <a href="/">На главную</a>
+    </header>
+
+    <main>
+        <form action="/create" method="post" class="form">
+            <label for="name">Название стола:</label>
+            <input type="text" name="name" id="name" required>
+
+            <label for="max_players">Максимальное число игроков:</label>
+            <input type="number" name="max_players" id="max_players" value="8" min="2" max="8">
+
+            <button type="submit" class="btn">Создать</button>
+        </form>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+

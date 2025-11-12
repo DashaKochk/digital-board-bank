@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Транзакции</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Транзакции</h1>
+        <a href="/dashboard">На кабинет</a>
+    </header>
+
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Отправитель</th>
+                    <th>Получатель</th>
+                    <th>Сумма</th>
+                    <th>Время</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in transactions %}
+                <tr>
+                    <td>{{ tx.sender.name }}</td>
+                    <td>{{ tx.receiver.name }}</td>
+                    <td>{{ tx.amount }}₽</td>
+                    <td>{{ tx.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Присоединиться к столу</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Присоединение к столу</h1>
+        <a href="/">На главную</a>
+    </header>
+
+    <main>
+        <form action="/join" method="post" class="form">
+            <label for="name">Название стола:</label>
+            <input type="text" name="name" id="name" required>
+
+            <button type="submit" class="btn">Присоединиться</button>
+        </form>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+
