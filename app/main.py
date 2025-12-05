@@ -40,13 +40,24 @@ def join_table_form(request: Request):
 @app.post("/join", response_class=HTMLResponse)
 def join_table(request: Request, name: str = Form(...), db: Session = Depends(get_db)):
     table = crud.get_table_by_name(db, name)
-    return templates.TemplateResponse("dashboard.html", {"request": request, "table": table})
+    if not table:
+        return RedirectResponse("/dashboard", status_code=302)
+    return RedirectResponse(url=f"/tables/{table.id}", status_code=303)
 
 @app.get("/dashboard", response_class=HTMLResponse)
 def dashboard(request: Request, db: Session = Depends(get_db)):
     tables = db.query(models.GameTable).all()
-    players = db.query(models.Player).all()
-    return templates.TemplateResponse("dashboard.html", {"request": request, "tables": tables, "players": players})
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "tables": tables
+    })
+
+@app.get("/tables/{table_id}", response_class=HTMLResponse)
+def table_page(request: Request, table_id: int, db: Session = Depends(get_db)):
+    table = crud.get_table(db, table_id)
+    if not table:
+        return RedirectResponse("/dashboard", status_code=302)
+    return templates.TemplateResponse("table.html", {"request": request, "table": table})
 
 @app.get("/transactions", response_class=HTMLResponse)
 def transactions(request: Request, db: Session = Depends(get_db)):
@@ -83,3 +94,12 @@ def api_transactions(db: Session = Depends(get_db)):
         "amount": tx.amount,
         "timestamp": tx.timestamp.isoformat()
     } for tx in txs])
+
+@app.get("/api/tables/{table_id}")
+def api_table(table_id: int, db: Session = Depends(get_db)):
+    t = crud.get_table(db, table_id)
+    return {
+        "id": t.id,
+        "name": t.name,
+        "players": [{"id": p.id, "name": p.name, "balance": p.balance} for p in t.players]
+    }

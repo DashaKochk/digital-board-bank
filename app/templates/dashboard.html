@@ -2,46 +2,27 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <header>
-        <h1>Личный кабинет</h1>
-        <a href="/">На главную</a>
-    </header>
 
-    <main>
-        <section class="tables">
-            <h2>Игровые столы</h2>
-            <ul>
-                {% for table in tables %}
-                <li>
-                    {{ table.name }} (макс. игроков: {{ table.max_players }})
-                    <ul>
-                        {% for player in table.players %}
-                        <li>{{ player.name }} — баланс: {{ player.balance }}₽</li>
-                        {% endfor %}
-                    </ul>
-                </li>
-                {% endfor %}
-            </ul>
-        </section>
+<header>
+    <h1>Личный кабинет</h1>
+    <a href="/">На главную</a>
+</header>
 
-        <section class="players">
-            <h2>Все игроки</h2>
-            <ul>
-                {% for player in players %}
-                <li>{{ player.name }} — баланс: {{ player.balance }}₽</li>
-                {% endfor %}
-            </ul>
-        </section>
+<main>
+    <section class="tables">
+        <h2>Игровые столы</h2>
+        <ul></ul>
+    </section>
 
-        <a href="/transactions" class="btn">Посмотреть транзакции</a>
-    </main>
+    <a href="/transactions" class="btn">Транзакции</a>
+</main>
 
-    <script src="/static/script.js"></script>
+<script src="/static/dashboard.js"></script>
 </body>
 </html>
+
 
