@@ -12,6 +12,12 @@ def create_table(db: Session, table: schemas.TableCreate):
     db.refresh(db_table)
     return db_table
 
+def get_table(db: Session, table_id: int):
+    return db.query(models.GameTable).filter(models.GameTable.id == table_id).first()
+
+def get_tables(db: Session):
+    return db.query(models.GameTable).all()
+
 def get_table_by_name(db: Session, name: str):
     return db.query(models.GameTable).filter(models.GameTable.name == name).first()
 
@@ -28,20 +34,24 @@ def get_players_by_table(db: Session, table_id: int):
 def create_transaction(db: Session, transaction: schemas.TransactionCreate):
     sender = db.query(models.Player).get(transaction.sender_id)
     receiver = db.query(models.Player).get(transaction.receiver_id)
+
     if sender and receiver and sender.balance >= transaction.amount:
         sender.balance -= transaction.amount
         receiver.balance += transaction.amount
+
         db_tx = models.Transaction(
             sender_id=sender.id,
             receiver_id=receiver.id,
             amount=transaction.amount
         )
+
         db.add(db_tx)
         db.commit()
         db.refresh(db_tx)
+
         return db_tx
+
     return None
 
 def get_all_transactions(db: Session):
     return db.query(models.Transaction).all()
-
