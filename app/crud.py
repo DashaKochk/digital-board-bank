@@ -12,6 +12,13 @@ def create_table(db: Session, table: schemas.TableCreate):
     db.refresh(db_table)
     return db_table
 
+def create_player(db: Session, player: schemas.PlayerCreate):
+    db_player = models.Player(name=player.name, table_id=player.table_id)
+    db.add(db_player)
+    db.commit()
+    db.refresh(db_player)
+    return db_player
+
 def get_table(db: Session, table_id: int):
     return db.query(models.GameTable).filter(models.GameTable.id == table_id).first()
 

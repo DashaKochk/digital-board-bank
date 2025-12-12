@@ -22,5 +22,17 @@ class TransactionOut(BaseModel):
     amount: float
     timestamp: datetime
 
+class PlayerBase(BaseModel):
+    name: str
+
+class PlayerCreate(PlayerBase):
+    table_id: int
+
+class Player(PlayerBase):
+    id: int
+    balance: int
+    table_id: int
+    uuid: str 
+
     class Config:
         orm_mode = True

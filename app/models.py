@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -18,6 +19,8 @@ class Player(Base):
     name = Column(String, nullable=False)
     balance = Column(Float, default=1000.0)
     table_id = Column(Integer, ForeignKey("game_tables.id"))
+    
+    uuid = Column(String, default=lambda: str(uuid.uuid4()), unique=True, index=True)
 
     table = relationship("GameTable", back_populates="players")
     sent_transactions = relationship("Transaction", foreign_keys="Transaction.sender_id", back_populates="sender")

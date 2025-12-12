@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from . import models, schemas, crud
 from .database import SessionLocal, engine
+from fastapi.responses import RedirectResponse
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -42,7 +43,23 @@ def join_table(request: Request, name: str = Form(...), db: Session = Depends(ge
     table = crud.get_table_by_name(db, name)
     if not table:
         return RedirectResponse("/dashboard", status_code=302)
+    
+    player = crud.create_player(db, schemas.PlayerCreate(name="Игрок", table_id=table.id))
+
+    response = RedirectResponse(url=f"/tables/{table.id}", status_code=303)
+    response.set_cookie(key="player_uuid", value=player.uuid)
+    return response
+
     return RedirectResponse(url=f"/tables/{table.id}", status_code=303)
+
+@app.post("/api/join_with_uuid")
+def join_with_uuid(uuid: str, table_id: int, db: Session = Depends(get_db)):
+    player = db.query(models.Player).filter(models.Player.uuid == uuid).first()
+    if not player:
+        return {"error": "Player not found"}
+    player.table_id = table_id
+    db.commit()
+    return {"success": True, "player_id": player.id}
 
 @app.get("/dashboard", response_class=HTMLResponse)
 def dashboard(request: Request, db: Session = Depends(get_db)):
