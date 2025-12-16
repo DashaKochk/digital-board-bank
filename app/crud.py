@@ -28,6 +28,9 @@ def get_tables(db: Session):
 def get_table_by_name(db: Session, name: str):
     return db.query(models.GameTable).filter(models.GameTable.name == name).first()
 
+def get_table(db: Session, table_id: int):
+    return db.query(models.GameTable).filter(models.GameTable.id == table_id).first()
+
 def create_player(db: Session, player: schemas.PlayerCreate):
     db_player = models.Player(name=player.name, table_id=player.table_id)
     db.add(db_player)
