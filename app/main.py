@@ -86,15 +86,15 @@ from fastapi.responses import JSONResponse
 @app.get("/api/tables")
 def api_tables(db: Session = Depends(get_db)):
     tables = db.query(models.GameTable).all()
-    result = []
-    for t in tables:
-        result.append({
+    return [
+        {
             "id": t.id,
             "name": t.name,
-            "max_players": t.max_players,
-            "players": [{"id": p.id, "name": p.name, "balance": p.balance} for p in t.players]
-        })
-    return JSONResponse(result)
+            "max_players": t.max_players
+        }
+        for t in tables
+    ]
+
 
 @app.get("/api/players")
 def api_players(db: Session = Depends(get_db)):
