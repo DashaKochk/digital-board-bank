@@ -6,24 +6,27 @@ from .database import Base
 
 class GameTable(Base):
     __tablename__ = "game_tables"
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False)
     max_players = Column(Integer, default=8)
     access_key = Column(String, nullable=True)
 
-    players = relationship("Player", back_populates="table")
+    players = relationship("Player", back_populates="table", cascade="all, delete-orphan")
+
 class Player(Base):
     __tablename__ = "players"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, index=True)  # ← ВАЖНО
+    user_id = Column(String, index=True)
     name = Column(String)
     balance = Column(Integer, default=1000)
-    table_id = Column(Integer, ForeignKey("tables.id"))
-    
+
+    table_id = Column(Integer, ForeignKey("game_tables.id"))
     uuid = Column(String, default=lambda: str(uuid.uuid4()), unique=True, index=True)
 
     table = relationship("GameTable", back_populates="players")
+
     sent_transactions = relationship("Transaction", foreign_keys="Transaction.sender_id", back_populates="sender")
     received_transactions = relationship("Transaction", foreign_keys="Transaction.receiver_id", back_populates="receiver")
 
