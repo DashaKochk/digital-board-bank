@@ -12,14 +12,11 @@ def create_table(db: Session, table: schemas.TableCreate):
     db.refresh(db_table)
     return db_table
 
-
 def get_table(db: Session, table_id: int):
     return db.query(models.GameTable).filter(models.GameTable.id == table_id).first()
 
-
 def get_tables(db: Session):
     return db.query(models.GameTable).all()
-
 
 def get_table_by_name(db: Session, name: str):
     return db.query(models.GameTable).filter(models.GameTable.name == name).first()

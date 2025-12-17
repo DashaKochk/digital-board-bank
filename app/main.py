@@ -131,11 +131,27 @@ def api_transactions(db: Session = Depends(get_db)):
         "timestamp": tx.timestamp.isoformat()
     } for tx in txs])
 
+from fastapi.responses import JSONResponse
+
 @app.get("/api/tables/{table_id}")
 def api_table(table_id: int, db: Session = Depends(get_db)):
     t = crud.get_table(db, table_id)
+
+    if not t:
+        return JSONResponse(
+            status_code=404,
+            content={"error": "Table not found"}
+        )
+
     return {
         "id": t.id,
         "name": t.name,
-        "players": [{"id": p.id, "name": p.name, "balance": p.balance} for p in t.players]
+        "players": [
+            {
+                "id": p.id,
+                "name": p.name,
+                "balance": p.balance
+            }
+            for p in t.players
+        ]
     }
