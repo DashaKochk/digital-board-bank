@@ -16,12 +16,22 @@
         <form action="/join" method="post" class="form">
             <label for="name">Название стола:</label>
             <input type="text" name="name" id="name" required>
+            <input type="hidden" name="user_id" id="user_id">
 
             <button type="submit" class="btn">Присоединиться</button>
         </form>
     </main>
 
     <script src="/static/script.js"></script>
+    <script>
+    const userId = localStorage.getItem("digital_bank_user_id");
+
+    if (!userId) {
+        alert("Ошибка: пользователь не идентифицирован");
+    } else {
+        document.getElementById("user_id").value = userId;
+    }
+</script>
 </body>
 </html>
 

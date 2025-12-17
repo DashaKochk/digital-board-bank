@@ -7,6 +7,20 @@
 </head>
 <body>
 
+<div style="margin-bottom: 10px; font-size: 14px; color: gray;">
+    Ваш ID: <span id="user-id"></span>
+</div>
+
+<script>
+    let userId = localStorage.getItem("digital_bank_user_id");
+
+    if (!userId) {
+        userId = "не найден";
+    }
+
+    document.getElementById("user-id").textContent = userId;
+</script>
+
 <header>
     <h1>Личный кабинет</h1>
     <a href="/">На главную</a>

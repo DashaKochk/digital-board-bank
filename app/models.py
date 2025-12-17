@@ -12,13 +12,14 @@ class GameTable(Base):
     access_key = Column(String, nullable=True)
 
     players = relationship("Player", back_populates="table")
-
 class Player(Base):
     __tablename__ = "players"
+
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    balance = Column(Float, default=1000.0)
-    table_id = Column(Integer, ForeignKey("game_tables.id"))
+    user_id = Column(String, index=True)  # ← ВАЖНО
+    name = Column(String)
+    balance = Column(Integer, default=1000)
+    table_id = Column(Integer, ForeignKey("tables.id"))
     
     uuid = Column(String, default=lambda: str(uuid.uuid4()), unique=True, index=True)
 

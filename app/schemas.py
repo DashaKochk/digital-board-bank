@@ -8,9 +8,20 @@ class TableCreate(BaseModel):
     access_key: Optional[str] = None
 
 class PlayerCreate(BaseModel):
+    user_id: str
     name: str
     table_id: int
+    
+class Player(BaseModel):
+    id: int
+    user_id: str
+    name: str
+    balance: int
+    table_id: int
 
+    class Config:
+        from_attributes = True
+        
 class TransactionCreate(BaseModel):
     sender_id: int
     receiver_id: int

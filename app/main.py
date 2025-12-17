@@ -39,10 +39,29 @@ def join_table_form(request: Request):
     return templates.TemplateResponse("join.html", {"request": request})
 
 @app.post("/join", response_class=HTMLResponse)
-def join_table(request: Request, name: str = Form(...), db: Session = Depends(get_db)):
+def join_table(
+    request: Request,
+    name: str = Form(...),
+    user_id: str = Form(...),
+    db: Session = Depends(get_db)
+):
     table = crud.get_table_by_name(db, name)
     if not table:
         return RedirectResponse("/dashboard", status_code=302)
+
+    player = crud.get_player_by_user_and_table(db, user_id, table.id)
+
+    if not player:
+        crud.create_player(
+            db,
+            schemas.PlayerCreate(
+                user_id=user_id,
+                name=f"Player-{user_id[:6]}",
+                table_id=table.id
+            )
+        )
+
+    return RedirectResponse(url=f"/tables/{table.id}", status_code=303)
     
     player = crud.create_player(db, schemas.PlayerCreate(name="Игрок", table_id=table.id))
 
