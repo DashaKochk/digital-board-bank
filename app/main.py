@@ -13,6 +13,16 @@ from app import crud
 models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 @app.post("/join")
 def join_table(
     name: str = Form(...),
@@ -31,17 +41,6 @@ def join_table(
     )
 
     return RedirectResponse(url="/dashboard", status_code=303)
-
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
