@@ -124,6 +124,13 @@ def transactions(request: Request, db: Session = Depends(get_db)):
 
 from fastapi.responses import JSONResponse
 
+@app.get("/transactions")
+def transactions():
+    return {
+        "status": "ok",
+        "message": "Transactions page is under construction"
+    }
+
 @app.get("/api/tables")
 def api_tables(db: Session = Depends(get_db)):
     tables = db.query(models.GameTable).all()
