@@ -135,23 +135,20 @@ from fastapi.responses import JSONResponse
 
 @app.get("/api/tables/{table_id}")
 def api_table(table_id: int, db: Session = Depends(get_db)):
-    t = crud.get_table(db, table_id)
+    table = crud.get_table(db, table_id)
 
-    if not t:
-        return JSONResponse(
-            status_code=404,
-            content={"error": "Table not found"}
-        )
+    if not table:
+        return {"error": "Table not found"}
 
     return {
-        "id": t.id,
-        "name": t.name,
+        "id": table.id,
+        "name": table.name,
         "players": [
             {
                 "id": p.id,
                 "name": p.name,
                 "balance": p.balance
             }
-            for p in t.players
+            for p in table.players
         ]
     }

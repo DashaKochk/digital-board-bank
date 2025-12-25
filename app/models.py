@@ -5,30 +5,23 @@ from datetime import datetime
 from .database import Base
 
 class GameTable(Base):
-    __tablename__ = "game_tables"
+    __tablename__ = "tables"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)
-    max_players = Column(Integer, default=8)
-    access_key = Column(String, nullable=True)
+    name = Column(String, unique=True)
+    max_players = Column(Integer)
 
-    players = relationship("Player", back_populates="table", cascade="all, delete-orphan")
+    players = relationship("Player", back_populates="table")
 
 class Player(Base):
     __tablename__ = "players"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, index=True)
     name = Column(String)
     balance = Column(Integer, default=1000)
-
-    table_id = Column(Integer, ForeignKey("game_tables.id"))
-    uuid = Column(String, default=lambda: str(uuid.uuid4()), unique=True, index=True)
+    table_id = Column(Integer, ForeignKey("tables.id"))
 
     table = relationship("GameTable", back_populates="players")
-
-    sent_transactions = relationship("Transaction", foreign_keys="Transaction.sender_id", back_populates="sender")
-    received_transactions = relationship("Transaction", foreign_keys="Transaction.receiver_id", back_populates="receiver")
 
 class Transaction(Base):
     __tablename__ = "transactions"
