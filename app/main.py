@@ -7,7 +7,9 @@ from . import models, schemas, crud
 from .database import SessionLocal, engine
 from fastapi.responses import RedirectResponse
 
+models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -137,13 +139,11 @@ from fastapi.responses import JSONResponse
 def api_table(table_id: int, db: Session = Depends(get_db)):
     table = crud.get_table(db, table_id)
 
-    if not table:
+    if table is None:
         return {"error": "Table not found"}
 
-    return {
-        "id": table.id,
-        "name": table.name,
-        "players": [
+    try:
+        players = [
             {
                 "id": p.id,
                 "name": p.name,
@@ -151,4 +151,11 @@ def api_table(table_id: int, db: Session = Depends(get_db)):
             }
             for p in table.players
         ]
+    except Exception as e:
+        return {"error": str(e)}
+
+    return {
+        "id": table.id,
+        "name": table.name,
+        "players": players
     }
