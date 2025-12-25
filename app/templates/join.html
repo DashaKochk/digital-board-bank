@@ -32,6 +32,18 @@
         document.getElementById("user_id").value = userId;
     }
 </script>
+<script src="/static/user.js"></script>
+<script src="/static/script.js"></script>
+<input type="hidden" name="user_id" id="user_id">
+
+<script>
+    document.getElementById("user_id").value = window.USER_ID;
+</script>
+<script>
+    document.getElementById("user_id").value =
+        localStorage.getItem("digital_bank_user_id");
+</script>
+
 </body>
 </html>
 

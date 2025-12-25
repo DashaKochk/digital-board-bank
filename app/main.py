@@ -6,10 +6,31 @@ from sqlalchemy.orm import Session
 from . import models, schemas, crud
 from .database import SessionLocal, engine
 from fastapi.responses import RedirectResponse
+from fastapi import Form
+from app.database import get_db
+from app import crud
 
 models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
+@app.post("/join")
+def join_table(
+    name: str = Form(...),
+    user_id: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    table = crud.get_table_by_name(db, name)
+
+    if not table:
+        return {"error": "Стол не найден"}
+
+    player = crud.create_player(
+        db,
+        name=user_id,
+        table_id=table.id
+    )
+
+    return RedirectResponse(url="/dashboard", status_code=303)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
