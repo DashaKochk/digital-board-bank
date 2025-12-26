@@ -139,16 +139,16 @@ def api_players(db: Session = Depends(get_db)):
     ]
 
 
-@app.get("/api/transactions")
-def api_transactions(db: Session = Depends(get_db)):
-    txs = crud.get_all_transactions(db)
-    return [
-        {
-            "id": tx.id,
-            "sender": tx.sender.name,
-            "receiver": tx.receiver.name,
-            "amount": tx.amount,
-            "timestamp": tx.timestamp.isoformat()
-        }
-        for tx in txs
-    ]
+# @app.get("/api/transactions")
+# def api_transactions(db: Session = Depends(get_db)):
+#     txs = crud.get_all_transactions(db)
+#     return [
+#         {
+#             "id": tx.id,
+#             "sender": tx.sender.name,
+#             "receiver": tx.receiver.name,
+#             "amount": tx.amount,
+#             "timestamp": tx.timestamp.isoformat()
+#         }
+#         for tx in txs
+#     ]
