@@ -28,7 +28,8 @@
                     <td>{{ tx.sender.name }}</td>
                     <td>{{ tx.receiver.name }}</td>
                     <td>{{ tx.amount }}₽</td>
-                    <td>{{ tx.timestamp }}</td>
+                    <td>{{ tx.timestamp.strftime("%d.%m.%Y %H:%M") }}</td>
+
                 </tr>
                 {% endfor %}
             </tbody>

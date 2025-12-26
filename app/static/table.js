@@ -11,9 +11,39 @@ async function fetchPlayers() {
 
     table.players.forEach(p => {
         const li = document.createElement("li");
-        li.textContent = `${p.name} — ${p.balance}₽`;
+        li.textContent = `ID: ${p.id} | ${p.name} — ${p.balance}₽`;
         ul.appendChild(li);
     });
+}
+
+async function sendMoney() {
+    const receiverId = document.getElementById("player-id").value;
+    const amount = document.getElementById("amount").value;
+
+    if (!receiverId || !amount) {
+        alert("Введите ID и сумму");
+        return;
+    }
+
+    const senderId = prompt("Введите ВАШ ID");
+
+    if (!senderId) return;
+
+    const form = new FormData();
+    form.append("sender_id", senderId);
+    form.append("receiver_id", receiverId);
+    form.append("amount", amount);
+
+    const res = await fetch("/api/transfer", {
+        method: "POST",
+        body: form
+    });
+
+    if (!res.ok) {
+        alert("Ошибка перевода");
+    }
+
+    fetchPlayers();
 }
 
 document.addEventListener("DOMContentLoaded", fetchPlayers);

@@ -35,7 +35,16 @@
     <a href="/transactions" class="btn">Транзакции</a>
 </main>
 
+<script src="/static/user.js"></script>
 <script src="/static/dashboard.js"></script>
+<div style="margin-bottom: 10px; font-size: 14px; color: gray;">
+    Ваш ID: <span id="user-id"></span>
+</div>
+
+<script>
+    document.getElementById("user-id").textContent = window.USER_ID;
+</script>
+
 </body>
 </html>
 

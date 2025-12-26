@@ -138,17 +138,15 @@ def api_players(db: Session = Depends(get_db)):
         for p in players
     ]
 
+@app.post("/api/transfer")
+def transfer(
+    sender_id: int = Form(...),
+    receiver_id: int = Form(...),
+    amount: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    tx = crud.transfer_money(db, sender_id, receiver_id, amount)
+    if not tx:
+        return JSONResponse({"error": "Transfer failed"}, status_code=400)
 
-# @app.get("/api/transactions")
-# def api_transactions(db: Session = Depends(get_db)):
-#     txs = crud.get_all_transactions(db)
-#     return [
-#         {
-#             "id": tx.id,
-#             "sender": tx.sender.name,
-#             "receiver": tx.receiver.name,
-#             "amount": tx.amount,
-#             "timestamp": tx.timestamp.isoformat()
-#         }
-#         for tx in txs
-#     ]
+    return {"status": "ok"}

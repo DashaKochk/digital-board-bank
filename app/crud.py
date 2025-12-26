@@ -53,4 +53,37 @@ def get_players_by_table(db: Session, table_id: int):
     return db.query(models.Player).filter(models.Player.table_id == table_id).all()
 
 def get_all_transactions(db: Session):
-    return []
+    return (
+        db.query(models.Transaction)
+        .order_by(models.Transaction.timestamp.desc())
+        .all()
+    )
+
+def transfer_money(
+    db: Session,
+    sender_id: int,
+    receiver_id: int,
+    amount: int
+):
+    sender = db.query(models.Player).get(sender_id)
+    receiver = db.query(models.Player).get(receiver_id)
+
+    if not sender or not receiver:
+        return None
+
+    if sender.balance < amount or amount <= 0:
+        return None
+
+    sender.balance -= amount
+    receiver.balance += amount
+
+    tx = models.Transaction(
+        sender_id=sender.id,
+        receiver_id=receiver.id,
+        amount=amount
+    )
+
+    db.add(tx)
+    db.commit()
+    db.refresh(tx)
+    return tx
