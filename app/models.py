@@ -3,16 +3,15 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
 
-
 class GameTable(Base):
     __tablename__ = "tables"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
     max_players = Column(Integer)
+    access_key = Column(String, unique=True, nullable=True)  # <- добавили access_key
 
     players = relationship("Player", back_populates="table")
-
 
 class Player(Base):
     __tablename__ = "players"
@@ -35,6 +34,7 @@ class Player(Base):
         foreign_keys="Transaction.receiver_id",
         back_populates="receiver"
     )
+
 class Transaction(Base):
     __tablename__ = "transactions"
 
