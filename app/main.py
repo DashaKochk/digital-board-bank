@@ -5,21 +5,12 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app import models, schemas, crud
-from app.database import SessionLocal, engine
-
-models.Base.metadata.create_all(bind=engine)
+from app.database import engine, get_db
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -36,7 +27,7 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
 
 
 @app.get("/create", response_class=HTMLResponse)
-def create_form(request: Request):
+def create_table_form(request: Request):
     return templates.TemplateResponse("create.html", {"request": request})
 
 
@@ -52,7 +43,7 @@ def create_table(
 
 
 @app.get("/join", response_class=HTMLResponse)
-def join_form(request: Request):
+def join_table_form(request: Request):
     return templates.TemplateResponse("join.html", {"request": request})
 
 
@@ -64,15 +55,18 @@ def join_table(
 ):
     table = crud.get_table_by_name(db, name)
     if not table:
-        return RedirectResponse("/dashboard", status_code=302)
+        return RedirectResponse("/dashboard", status_code=303)
 
-    crud.create_player(
-        db,
-        schemas.PlayerCreate(
-            name=f"Player-{user_id[:6]}",
-            table_id=table.id
+    player = crud.get_player_by_user_and_table(db, user_id, table.id)
+    if not player:
+        crud.create_player(
+            db,
+            schemas.PlayerCreate(
+                user_id=user_id,
+                name=f"Player-{user_id[:6]}",
+                table_id=table.id
+            )
         )
-    )
 
     return RedirectResponse(f"/tables/{table.id}", status_code=303)
 
@@ -91,17 +85,21 @@ def table_page(request: Request, table_id: int, db: Session = Depends(get_db)):
 
 @app.get("/transactions", response_class=HTMLResponse)
 def transactions_page(request: Request, db: Session = Depends(get_db)):
-    txs = crud.get_all_transactions(db)
+    transactions = crud.get_all_transactions(db)
     return templates.TemplateResponse(
         "transactions.html",
-        {"request": request, "transactions": txs}
+        {"request": request, "transactions": transactions}
     )
 
 @app.get("/api/tables")
 def api_tables(db: Session = Depends(get_db)):
     tables = db.query(models.GameTable).all()
     return [
-        {"id": t.id, "name": t.name, "max_players": t.max_players}
+        {
+            "id": t.id,
+            "name": t.name,
+            "max_players": t.max_players
+        }
         for t in tables
     ]
 
@@ -113,12 +111,15 @@ def api_table(table_id: int, db: Session = Depends(get_db)):
         return JSONResponse({"error": "Table not found"}, status_code=404)
 
     players = crud.get_players_by_table(db, table_id)
-
     return {
         "id": table.id,
         "name": table.name,
         "players": [
-            {"id": p.id, "name": p.name, "balance": p.balance}
+            {
+                "id": p.id,
+                "name": p.name,
+                "balance": p.balance
+            }
             for p in players
         ]
     }
@@ -128,7 +129,12 @@ def api_table(table_id: int, db: Session = Depends(get_db)):
 def api_players(db: Session = Depends(get_db)):
     players = db.query(models.Player).all()
     return [
-        {"id": p.id, "name": p.name, "balance": p.balance, "table_id": p.table_id}
+        {
+            "id": p.id,
+            "name": p.name,
+            "balance": p.balance,
+            "table_id": p.table_id
+        }
         for p in players
     ]
 
