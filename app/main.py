@@ -6,8 +6,12 @@ from sqlalchemy.orm import Session
 
 from app import models, schemas, crud
 from app.database import engine, get_db
+from app.database import engine
+from app.models import Base
 
-app = FastAPI()
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(debug=True)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
